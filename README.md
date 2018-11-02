@@ -4,6 +4,7 @@
 
 ## 增加依赖项
   除了 vue-cli 生成的所有依赖外，新增了以下几项依赖
+
     - dependencies
       - fastclick 解决移动端点击事件300毫秒延迟
       - babel-runtine 对 ES6 的语法转译
