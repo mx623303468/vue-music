@@ -1,21 +1,115 @@
 <template>
-  <div class="slider">
-    <div class="slider-group">
+  <div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
       <slot></slot>
     </div>
-    <div class="dots"></div>
+    <div class="dots">
+      <span
+        v-for="(dot, index) in dots"
+        :key="index"
+        class="dot"
+        :class="{active: currentPage === index}"
+      />
+    </div>
   </div>
 </template>
 
 <script type="text/javascript">
+import BScroll from 'better-scroll'
+import { addClass } from 'common/js/dom'
+
 export default {
   data () {
     return {
-
+      dots: [],
+      currentPage: 0
     }
   },
-  components: {
+  props: {
+    loop: {
+      type: Boolean,
+      default: true
+    },
+    autoPlay: {
+      type: Boolean,
+      default: true
+    },
+    interval: {
+      type: Number,
+      default: 2000
+    }
+  },
+  methods: {
+    _setSliderWidth(isResize) {
+      this.children = this.$refs.sliderGroup.children
 
+      let width = 0
+      let sliderWidth = this.$refs.slider.clientWidth
+      for (let i = 0; i < this.children.length; i++) {
+        let child = this.children[i]
+        addClass(child, 'slider-item')
+        child.style.width = sliderWidth + 'px'
+        width += sliderWidth
+      }
+      if (this.loop && !isResize) {
+        width += 2 * sliderWidth
+      }
+      this.$refs.sliderGroup.style.width = width + 'px'
+    },
+    _initSlider() {
+      this.slider = new BScroll(this.$refs.slider, {
+        scrollX: true,
+        scrollY: false,
+        momentum: false,
+        snap: {
+          loop: this.loop,
+          threshold: 0.3,
+          speed: 400
+        },
+        click: true
+      })
+
+      this.slider.on('scrollEnd', () => {
+        this.currentPage = this.slider.getCurrentPage().pageX
+
+        if (this.autoPlay) {
+          clearTimeout(this.timer)
+          this._play()
+        }
+      })
+    },
+    _initDots() {
+      this.dots = new Array(this.children.length)
+    },
+    _play() {
+      // let pageIndex = this.currentPage + 1
+      this.timer = setTimeout(() => {
+        // this.slider.goToPage(pageIndex, 0, 400)
+        this.slider.next()
+      }, this.interval)
+    }
+  },
+  mounted() {
+    // 浏览器的刷新通常在 17毫秒，这里设置 20毫秒，是为了能保证 DOM 渲染完毕
+    setTimeout(() => {
+      this._setSliderWidth()
+      this._initDots()
+      this._initSlider()
+
+      if (this.autoPlay) {
+        console.log('mounted play')
+        this._play()
+      }
+    }, 20)
+
+    window.addEventListener('resize', () => {
+      if (!this.slider) return
+      this._setSliderWidth(true)
+      this.slider.refresh()
+    })
+  },
+  destroyed() {
+    clearTimeout(this.timer)
   }
 }
 </script>
@@ -29,6 +123,19 @@ export default {
       position relative
       overflow hidden
       white-space nowrap
+      .slider-item
+        float left
+        box-sizing border-box
+        overflow hidden
+        text-align center
+        a
+          display block
+          width 100%
+          overflow hidden
+          text-decoration none
+          img
+            display block
+            width 100%
     .dots
       position absolute
       right 0
@@ -36,4 +143,15 @@ export default {
       bottom 12px
       text-align center
       font-style 0
+      .dot
+        display inline-block
+        width 8px
+        height 8px
+        border-radius 50%
+        margin-right 5px
+        background-color $color-text-l
+        &.active
+          width: 20px
+          border-radius: 5px
+          background: $color-text-ll
 </style>

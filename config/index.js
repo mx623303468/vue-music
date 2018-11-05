@@ -10,7 +10,20 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api/getPlayList': {
+        target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
+        secure: false,
+        changeOrigin: true,
+        bypass: function (req, res, proxyOptions) {
+          req.headers.referer = 'https://y.qq.com/portal/playlist.html';
+          req.headers.host = 'c.y.qq.com';
+        },
+        pathRewrite: {
+          '^/api/getPlayList': ''
+        }
+      }
+    },
 
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST

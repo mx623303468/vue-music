@@ -30,11 +30,11 @@ export default {
     .icon
       bg-image('logo')
       display inline-block
-      width 30px
-      height 32px
-      background-size 30px 32px
+      width 26px
+      height 28px
+      background-size 26px 28px
       vertical-align top
-      margin-top 5px
+      margin-top 6px
       margin-right 5px
     .title
       display inline-block
