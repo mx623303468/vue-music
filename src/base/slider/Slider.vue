@@ -97,7 +97,6 @@ export default {
       this._initSlider()
 
       if (this.autoPlay) {
-        console.log('mounted play')
         this._play()
       }
     }, 20)
