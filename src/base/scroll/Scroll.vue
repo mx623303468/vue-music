@@ -33,6 +33,13 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+
+      if (this.listenScroll) {
+        const _vue = this
+        this.scroll.on('scroll', (pos) => {
+          _vue.$emit('scroll', pos)
+        })
+      }
     },
     disable() {
       this.scroll && this.scroll.disable()

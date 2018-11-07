@@ -87,6 +87,7 @@ export default {
     setTimeout(() => {
       this._getRecommend()
       this._getPlayList()
+      this.$refs.scroll.refresh()
     }, 1000)
   }
 }

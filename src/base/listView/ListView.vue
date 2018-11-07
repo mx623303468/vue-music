@@ -1,5 +1,12 @@
 <template>
-  <scroll class="list-view" :data="data" ref="listview">
+  <scroll
+    class="list-view"
+    :data="data"
+    ref="listview"
+    :listenScroll="listenScroll"
+    :probeType="probeType"
+    @scroll="scroll"
+  >
     <ul>
       <li
         class="list-group"
@@ -14,7 +21,7 @@
             v-for="singer in item.singers"
             :key="singer.id"
           >
-            <img class="avatar" v-lazy="singer.avatar" alt="头像">
+            <img class="avatar" v-lazy="singer.avatar" alt="歌手">
             <span class="name">{{singer.name}}</span>
           </li>
         </ul>
@@ -46,7 +53,10 @@ const ANCHOR_HEIGHT = 16
 export default {
   data() {
     return {
-      currentIndex: 0
+      touches: {},
+      currentIndex: 0,
+      scrollY: -1,
+      listHeight: []
     }
   },
   props: {
@@ -62,27 +72,66 @@ export default {
       })
     }
   },
+  watch: {
+    data() {
+      setTimeout(() => {
+        this._calculateHeight()
+      }, 20)
+    },
+    scrollY(newY) {
+      const listHeight = this.listHeight
+
+      // 当滚动到顶部时， newY > 0
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+
+      // 在中间部分
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let originHeight = listHeight[i]
+        let endHeight = listHeight[i + 1]
+
+        if (-newY >= originHeight && -newY < endHeight) {
+          this.currentIndex = i
+          return
+        }
+      }
+
+      // 当滚到底部时，且 -newY 大于最后一个元素的底部 clientHeight
+      this.currentIndex = listHeight.length - 2
+    }
+  },
   components: {
     scroll,
     loading
   },
   created() {
-    this.touches = {}
+    // 是否监控 scroll 事件
+    this.listenScroll = true
+    // 获得滚动位置的时机
+    this.probeType = 3
+    setTimeout(() => {
+      // 计算 listHeight 的高度
+      this._calculateHeight()
+    }, 20)
   },
   methods: {
     // 手指触碰事件方法
     onShortcutTouchStart(index) {
-      // 修改 currentIndex 改变当前被触碰的 DOM元素 的样式
-      this.currentIndex = index
       // 获得事件对象
       let e = window.event
       // 获得当前被触碰的 DOM元素的 pageY
       let clickFirstTouch = e.touches[0].pageY
-      // 保存当前 pageY 到全局对象 touches 中，便于 touchMove事件调用
+      // 保存当前 pageY, index 到全局对象 touches 中，便于 touchMove事件调用
       this.touches.stratTouch = clickFirstTouch
+      this.touches.stratIndex = index
 
       // 调用滚动方法，传入 index，滚动到指定 DOM 元素的位置
       this._scrollToElement(index)
+
+      // 改变 currentIndex 更改样式
+      this.currentIndex = index
     },
     onShortcutTouchMove(e) {
       // 获得事件对象，并保存 pageY 到全局对象 touches 中
@@ -91,13 +140,38 @@ export default {
       // 初始位置 减 滑动距离 除以 DOM 元素高度, 计算出滑动了几个 DOM 节点，并进行向下取整，保存到 moveLength
       let moveLength = (this.touches.endTouch - this.touches.stratTouch) / ANCHOR_HEIGHT | 0
       // 初始节点的 index 加上 计算出的滑动了几个节点，得到需要滚动到第几个 DOM节点位置
-      let anchorIndex = parseInt(this.currentIndex) + moveLength
+      let anchorIndex = parseInt(this.touches.stratIndex) + moveLength
       // 调用滚动方法，传入 index，滚动到指定 DOM 元素的位置
       this._scrollToElement(anchorIndex)
+
+      // // 改变 currentIndex 更改样式
+      if (anchorIndex < 0) {
+        this.currentIndex = 0
+      } else if (anchorIndex > this.listHeight.length - 2) {
+        this.currentIndex = this.listHeight.length - 2
+      } else {
+        this.currentIndex = anchorIndex
+      }
     },
     // 对 better-scroll 的 scrollToElement 方法进行封装, 方便调用， 精简代码， 易于维护。
     _scrollToElement(index) {
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
+    },
+    _calculateHeight() {
+      this.listHeight = []
+      const list = this.$refs.listGroup.map(item => {
+        return item.clientHeight
+      })
+      let h = 0
+      this.listHeight.push(h)
+
+      for (let i = 0; i < list.length; i++) {
+        h += list[i]
+        this.listHeight.push(h)
+      }
+    },
+    scroll(pos) {
+      this.scrollY = pos.y
     }
   }
 }
