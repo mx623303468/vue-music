@@ -159,9 +159,12 @@ export default {
     },
     _calculateHeight() {
       this.listHeight = []
-      const list = this.$refs.listGroup.map(item => {
-        return item.clientHeight
-      })
+      let list = []
+      if (this.$refs.listGroup) {
+        list = this.$refs.listGroup.map(item => {
+          return item.clientHeight
+        })
+      }
       let h = 0
       this.listHeight.push(h)
 
@@ -181,7 +184,7 @@ export default {
 @import '~common/styles/variable'
 
   .list-view
-    position absolute
+    position relative
     width 100%
     height 100%
     overflow hidden
@@ -210,7 +213,7 @@ export default {
     .shortcut-list
       position absolute
       right 0
-      top 40%
+      top 50%
       transform translateY(-50%)
       text-align center
       width 20px

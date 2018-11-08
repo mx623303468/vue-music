@@ -91,4 +91,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.singer
+  position absolute
+  top 81px
+  bottom 0
+  width 100%
 </style>
