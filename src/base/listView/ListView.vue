@@ -40,6 +40,9 @@
         >{{item}}</li>
       </ul>
     </div>
+    <div class="list-fixed-title-warp" v-show="fixedTitle" ref="fixed">
+      <h2 class="list-fixed-title">{{fixedTitle}}</h2>
+    </div>
     <loading v-show="!data.length"></loading>
   </scroll>
 </template>
@@ -49,14 +52,16 @@ import scroll from 'base/scroll/Scroll'
 import loading from 'base/loading/Loading'
 
 const ANCHOR_HEIGHT = 16
+const TITLE_HEIGHT = 40
 
 export default {
   data() {
     return {
       touches: {},
+      listHeight: [],
       currentIndex: 0,
       scrollY: -1,
-      listHeight: []
+      diff: -1
     }
   },
   props: {
@@ -70,6 +75,12 @@ export default {
       return this.data.map((item) => {
         return item.title.substr(0, 1)
       })
+    },
+    fixedTitle() {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   watch: {
@@ -94,12 +105,22 @@ export default {
 
         if (-newY >= originHeight && -newY < endHeight) {
           this.currentIndex = i
+          this.diff = endHeight + newY
           return
         }
       }
 
       // 当滚到底部时，且 -newY 大于最后一个元素的底部 clientHeight
       this.currentIndex = listHeight.length - 2
+    },
+    diff(newVal) {
+      // 监测下一个标题的位置 离顶部标题的距离，如果大于 0，并且小于顶部标题的高度时，顶部标题就同步向上偏移
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+
+      // if (this.fixedTop === fixedTop) return
+      // this.fixedTop = fixedTop
+
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
   },
   components: {
@@ -197,7 +218,7 @@ export default {
         box-shadow 0 1px 0 #eee
         color $color-qq-theme
         font-size $font-size-18 = 18px
-        background-color $color-text-d
+        background-color $color-background-f7f7f7
       .list-group-item
         display flex
         align-items center
@@ -225,4 +246,16 @@ export default {
         color $color-text-999
         &.current
           color $color-qq-theme
+    .list-fixed-title-warp
+      position absolute
+      top 0
+      left 0
+      right 0
+      height 30px
+      line-height 30px
+      padding 5px 0 5px 20px
+      box-shadow 0 1px 0 #eee
+      color $color-qq-theme
+      font-size $font-size-18 = 18px
+      background-color $color-background-f7f7f7
 </style>
