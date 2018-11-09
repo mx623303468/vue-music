@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-    <list-view :data="singerList"></list-view>
+    <list-view :data="singerList" @gotoSingerDetail="selectSinger"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -23,6 +24,11 @@ export default {
     this._getsingerList()
   },
   methods: {
+    selectSinger(singer) {
+      this.$router.push({
+        path: `singer/${singer.id}`
+      })
+    },
     _getsingerList() {
       getSingerList().then((res) => {
         if (res.code === ERR_OK) {

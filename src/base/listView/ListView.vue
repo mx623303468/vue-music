@@ -20,6 +20,7 @@
             class="list-group-item"
             v-for="singer in item.singers"
             :key="singer.id"
+            @touchstart="gotoSingerDetail(singer)"
           >
             <img class="avatar" v-lazy="singer.avatar" alt="歌手">
             <span class="name">{{singer.name}}</span>
@@ -138,6 +139,10 @@ export default {
     }, 20)
   },
   methods: {
+    // 跳转歌手详情页
+    gotoSingerDetail(singer) {
+      this.$emit('gotoSingerDetail', singer)
+    },
     // 手指触碰事件方法
     onShortcutTouchStart(index) {
       // 获得事件对象
