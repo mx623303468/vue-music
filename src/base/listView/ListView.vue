@@ -20,7 +20,7 @@
             class="list-group-item"
             v-for="singer in item.singers"
             :key="singer.id"
-            @touchstart="gotoSingerDetail(singer)"
+            @click="gotoSingerDetail(singer)"
           >
             <img class="avatar" v-lazy="singer.avatar" alt="歌手">
             <span class="name">{{singer.name}}</span>
