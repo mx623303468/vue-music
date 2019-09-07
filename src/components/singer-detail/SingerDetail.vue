@@ -1,6 +1,6 @@
 <template>
   <transition name="singer-detail-slide">
-    <div class="singer-detail" :class="{isShow: !singer.id}">singer-detail</div>
+    <music-list :class="{isShow: !singer.id}" :songs="songs" :title="title" :bgImage="bgImage"></music-list>
   </transition>
 </template>
 
@@ -9,14 +9,24 @@ import { mapGetters } from 'vuex'
 import { getSingerDetail } from 'api/singer'
 import { createSong } from 'common/js/song'
 import { ERR_OK } from 'api/config'
+import MusicList from 'components/music-list'
 
 export default {
+  components: {
+    MusicList
+  },
   data() {
     return {
       songs: []
     }
   },
   computed: {
+    title() {
+      return this.singer.name
+    },
+    bgImage() {
+      return this.singer.avatar
+    },
     ...mapGetters(['singer'])
   },
   created() {
@@ -71,15 +81,6 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~common/styles/variable';
-
-.singer-detail {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: $color-background-f4f4f4 = #f4f4f4;
-}
 
 .isShow {
   opacity: 0;
