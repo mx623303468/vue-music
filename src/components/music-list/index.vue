@@ -1,13 +1,21 @@
 <template>
   <div class="music-list">
-    <div class="top-bar">
+    <div class="top-bar" ref="top-bar">
       <i class="icon-back" @click="back"></i>
       <h1 class="title-name" v-html="title"></h1>
     </div>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
     </div>
-    <song-scroll :data="songs" class="song-scroll" ref="songScroll">
+    <div class="layer" ref="layer"></div>
+    <song-scroll
+      :data="songs"
+      class="song-scroll"
+      ref="songScroll"
+      :probe-type="probeType"
+      :listen-scroll="listenScroll"
+      @scroll="scroll"
+    >
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -34,6 +42,11 @@ export default {
       default: ''
     }
   },
+  data() {
+    return {
+      scrollY: 0
+    }
+  },
   components: {
     SongScroll,
     SongList
@@ -43,13 +56,31 @@ export default {
       return `background-image: url(${this.bgImage})`
     }
   },
+  created() {
+    this.probeType = 3
+    this.listenScroll = true
+  },
   mounted() {
-    this.$refs['songScroll'].$el.style.top = `${this.$refs['bgImage']
-      .clientHeight + 2}px`
+    // topbar 高度
+    this.topBarHeight = this.$refs['top-bar'].offsetHeight
+    // 上部 背景图的高度
+    this.bgImageHeight = this.$refs['bgImage'].clientHeight
+    this.$refs['songScroll'].$el.style.top = `${this.bgImageHeight + 2}px`
   },
   methods: {
     back() {
       this.$router.back()
+    },
+    scroll(pos) {
+      this.scrollY = pos.y
+    }
+  },
+  watch: {
+    scrollY(newY) {
+      // 用背景图的高度减去 topbar 的高度，得出最大可滚动距离，和最新的滚动位置做比较，取最大值。
+      let translateY = Math.max(-this.bgImageHeight + this.topBarHeight, newY)
+
+      this.$refs['layer'].style['transform'] = `translateY(${translateY}px)`
     }
   }
 }
@@ -65,7 +96,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $color-background-f4f4f4 = #f4f4f4;
+  background-color: $color-background-f4f4f4;
 
   .top-bar {
     z-index: 100;
@@ -117,12 +148,19 @@ export default {
     }
   }
 
+  .layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: $color-background-f4f4f4;
+  }
+
   .song-scroll {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
-    overflow: hidden;
+    // overflow: hidden;
     padding-top: 10px;
     padding-bottom: 10px;
 
