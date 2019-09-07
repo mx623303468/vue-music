@@ -1,6 +1,6 @@
 <template>
   <div class="singer">
-    <list-view :data="singerList" @gotoSingerDetail="selectSinger"></list-view>
+    <list-view :data="singerList" @selectItem="gotoSingerDetail"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -13,7 +13,7 @@ import Singer, { HOT_NAME, HOT_SINGER_LENGTH } from 'common/js/singer'
 import ListView from 'base/listView/ListView'
 
 export default {
-  data () {
+  data() {
     return {
       singerList: []
     }
@@ -25,20 +25,23 @@ export default {
     this._getsingerList()
   },
   methods: {
-    selectSinger(singer) {
+    // 跳转到歌手详情页
+    gotoSingerDetail(singer) {
       this.$router.push({
         path: `singer/${singer.id}`
       })
       this.setSinger(singer)
     },
     _getsingerList() {
-      getSingerList().then((res) => {
-        if (res.code === ERR_OK) {
-          this.singerList = this._normalizeSingerList(res.data.list)
-        }
-      }).catch((error) => {
-        console.log(error)
-      })
+      getSingerList()
+        .then(res => {
+          if (res.code === ERR_OK) {
+            this.singerList = this._normalizeSingerList(res.data.list)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     // 按照 A-Z 字母分类，格式化歌手列表数据
     _normalizeSingerList(list) {
@@ -54,10 +57,12 @@ export default {
       list.forEach((ele, index) => {
         // 2.1 按照 HOT_SINGER_LENGTH 的长度，取出作为热门数据，push 到  hot 中
         if (index < HOT_SINGER_LENGTH) {
-          map.hot.singers.push(new Singer({
-            name: ele.Fsinger_name,
-            id: ele.Fsinger_mid
-          }))
+          map.hot.singers.push(
+            new Singer({
+              name: ele.Fsinger_name,
+              id: ele.Fsinger_mid
+            })
+          )
         }
         // 2.2 按照字母，把数据存入 singers 中
         const key = ele.Findex
@@ -67,10 +72,12 @@ export default {
             singers: []
           }
         }
-        map[key].singers.push(new Singer({
-          name: ele.Fsinger_name,
-          id: ele.Fsinger_mid
-        }))
+        map[key].singers.push(
+          new Singer({
+            name: ele.Fsinger_name,
+            id: ele.Fsinger_mid
+          })
+        )
       })
 
       // 3. 把格式化后的数据进行排序处理
@@ -102,9 +109,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.singer
-  position absolute
-  top 81px
-  bottom 0
-  width 100%
+.singer {
+  position: absolute;
+  top: 81px;
+  bottom: 0;
+  width: 100%;
+}
 </style>

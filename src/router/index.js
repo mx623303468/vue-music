@@ -8,15 +8,18 @@ export default new Router({
     {
       path: '/',
       redirect: '/recommend'
-    }, {
+    },
+    {
       path: '/recommend',
       name: 'Recommend',
       component: () => import('components/recommend/Recommend')
-    }, {
+    },
+    {
       path: '/rank',
       name: 'Rank',
       component: () => import('components/rank/Rank')
-    }, {
+    },
+    {
       path: '/singer',
       name: 'Singer',
       component: () => import('components/singer/Singer'),
@@ -26,7 +29,8 @@ export default new Router({
           component: () => import('components/singer-detail/SingerDetail')
         }
       ]
-    }, {
+    },
+    {
       path: '/search',
       name: 'Search',
       component: () => import('components/search/Search')

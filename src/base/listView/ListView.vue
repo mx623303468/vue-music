@@ -8,30 +8,23 @@
     @scroll="scroll"
   >
     <ul>
-      <li
-        class="list-group"
-        v-for="item in data"
-        :key="item.title"
-        ref="listGroup"
-      >
+      <li class="list-group" v-for="item in data" :key="item.title" ref="listGroup">
         <h2 class="list-group-title">{{item.title}}</h2>
         <ul>
           <li
             class="list-group-item"
             v-for="singer in item.singers"
             :key="singer.id"
-            @click="gotoSingerDetail(singer)"
+            @click="selectItem(singer)"
           >
-            <img class="avatar" v-lazy="singer.avatar" alt="歌手">
+            <img class="avatar" v-lazy="singer.avatar" alt="歌手" />
             <span class="name">{{singer.name}}</span>
           </li>
         </ul>
       </li>
     </ul>
     <div class="shortcut-list">
-      <ul
-        @touchmove.stop.prevent="onShortcutTouchMove"
-      >
+      <ul @touchmove.stop.prevent="onShortcutTouchMove">
         <li
           v-for="(item, index) in shortcutList"
           :key="index"
@@ -73,7 +66,7 @@ export default {
   },
   computed: {
     shortcutList() {
-      return this.data.map((item) => {
+      return this.data.map(item => {
         return item.title.substr(0, 1)
       })
     },
@@ -81,7 +74,9 @@ export default {
       if (this.scrollY > 0) {
         return ''
       }
-      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+      return this.data[this.currentIndex]
+        ? this.data[this.currentIndex].title
+        : ''
     }
   },
   watch: {
@@ -116,7 +111,8 @@ export default {
     },
     diff(newVal) {
       // 监测下一个标题的位置 离顶部标题的距离，如果大于 0，并且小于顶部标题的高度时，顶部标题就同步向上偏移
-      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      let fixedTop =
+        newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
 
       // if (this.fixedTop === fixedTop) return
       // this.fixedTop = fixedTop
@@ -139,9 +135,9 @@ export default {
     }, 20)
   },
   methods: {
-    // 跳转歌手详情页
-    gotoSingerDetail(singer) {
-      this.$emit('gotoSingerDetail', singer)
+    // 派发列表项点击事件
+    selectItem(singer) {
+      this.$emit('selectItem', singer)
     },
     // 手指触碰事件方法
     onShortcutTouchStart(index) {
@@ -164,7 +160,8 @@ export default {
       let moveFirstTouch = e.touches[0]
       this.touches.endTouch = moveFirstTouch.pageY
       // 初始位置 减 滑动距离 除以 DOM 元素高度, 计算出滑动了几个 DOM 节点，并进行向下取整，保存到 moveLength
-      let moveLength = (this.touches.endTouch - this.touches.stratTouch) / ANCHOR_HEIGHT | 0
+      let moveLength =
+        ((this.touches.endTouch - this.touches.stratTouch) / ANCHOR_HEIGHT) | 0
       // 初始节点的 index 加上 计算出的滑动了几个节点，得到需要滚动到第几个 DOM节点位置
       let anchorIndex = parseInt(this.touches.stratIndex) + moveLength
       // 调用滚动方法，传入 index，滚动到指定 DOM 元素的位置
@@ -207,60 +204,79 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~common/styles/variable'
+@import '~common/styles/variable';
 
-  .list-view
-    position relative
-    width 100%
-    height 100%
-    overflow hidden
-    .list-group
-      padding-bottom 30px
-      .list-group-title
-        height 30px
-        line-height 30px
-        padding 5px 0 5px 20px
-        box-shadow 0 1px 0 #eee
-        color $color-qq-theme
-        font-size $font-size-18 = 18px
-        background-color $color-background-f7f7f7
-      .list-group-item
-        display flex
-        align-items center
-        padding 20px 0 0 30px
-        .avatar
-          width 50px
-          height 50px
-          border-radius 50%
-        .name
-          margin-left 20px
-          font-size $font-size-16 = 16px
-          color $color-text-333
-    .shortcut-list
-      position absolute
-      right 0
-      top 50%
-      transform translateY(-50%)
-      text-align center
-      width 20px
-      font-family: Helvetica
-      .item
-        padding 2px
-        line-height 1
-        font-size $font-size-12
-        color $color-text-999
-        &.current
-          color $color-qq-theme
-    .list-fixed-title-warp
-      position absolute
-      top 0
-      left 0
-      right 0
-      height 30px
-      line-height 30px
-      padding 5px 0 5px 20px
-      box-shadow 0 1px 0 #eee
-      color $color-qq-theme
-      font-size $font-size-18 = 18px
-      background-color $color-background-f7f7f7
+.list-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .list-group {
+    padding-bottom: 30px;
+
+    .list-group-title {
+      height: 30px;
+      line-height: 30px;
+      padding: 5px 0 5px 20px;
+      box-shadow: 0 1px 0 #eee;
+      color: $color-qq-theme;
+      font-size: $font-size-18 = 18px;
+      background-color: $color-background-f7f7f7;
+    }
+
+    .list-group-item {
+      display: flex;
+      align-items: center;
+      padding: 20px 0 0 30px;
+
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+
+      .name {
+        margin-left: 20px;
+        font-size: $font-size-16 = 16px;
+        color: $color-text-333;
+      }
+    }
+  }
+
+  .shortcut-list {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    width: 20px;
+    font-family: Helvetica;
+
+    .item {
+      padding: 2px;
+      line-height: 1;
+      font-size: $font-size-12;
+      color: $color-text-999;
+
+      &.current {
+        color: $color-qq-theme;
+      }
+    }
+  }
+
+  .list-fixed-title-warp {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    line-height: 30px;
+    padding: 5px 0 5px 20px;
+    box-shadow: 0 1px 0 #eee;
+    color: $color-qq-theme;
+    font-size: $font-size-18 = 18px;
+    background-color: $color-background-f7f7f7;
+  }
+}
 </style>
