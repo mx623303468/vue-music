@@ -28,7 +28,7 @@ export default {
     // 跳转到歌手详情页
     gotoSingerDetail(singer) {
       this.$router.push({
-        path: `singer/${singer.id}`
+        path: `/singer/${singer.id}`
       })
       this.setSinger(singer)
     },

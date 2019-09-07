@@ -6,7 +6,6 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -15,14 +14,32 @@ module.exports = {
         target: 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg',
         secure: false,
         changeOrigin: true,
-        bypass: function (req, res, proxyOptions) {
-          req.headers.referer = 'https://y.qq.com/portal/playlist.html';
-          req.headers.host = 'c.y.qq.com';
+        bypass: function(req, res, proxyOptions) {
+          req.headers.referer = 'https://y.qq.com/portal/playlist.html'
+          req.headers.host = 'c.y.qq.com'
         },
         pathRewrite: {
           '^/api/getPlayList': ''
         }
       }
+      // '/api/lyric': {
+      //   target: 'http://ustbhuangyi.com/music/api/getPurlUrl',
+      //   // secure: false,
+      //   // changeOrigin: true,
+      //   bypass: function(req, res, proxyOptions) {
+      //     req.headers.referer = 'http://ustbhuangyi.com/music/'
+      //     req.headers.host = 'ustbhuangyi.com'
+      //   }
+      // },
+      // '/api/getPurlUrl': {
+      //   target: 'http://ustbhuangyi.com/music/api/getPurlUrl',
+      //   // secure: false,
+      //   changeOrigin: true,
+      //   bypass: function(req, res, proxyOptions) {
+      //     req.headers.referer = 'http://ustbhuangyi.com/music/'
+      //     req.headers.host = 'ustbhuangyi.com'
+      //   }
+      // }
     },
 
     // Various Dev Server settings

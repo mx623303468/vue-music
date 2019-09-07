@@ -17,7 +17,7 @@ export const getSingerList = () => {
   return jsonp(url, data, options)
 }
 
-export const getSingerDetail = (singerId) => {
+export const getSingerDetail = singerId => {
   const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg'
   const data = Object.assign({}, commonParams, {
     loginUin: 0,
@@ -34,3 +34,23 @@ export const getSingerDetail = (singerId) => {
 
   return jsonp(url, data, options)
 }
+
+// export const getSongVkey = songmid => {
+//   const url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+//   const data = Object.assign(
+//     {},
+//     {
+//       callback: 'musicJsonCallback',
+//       loginUin: 0,
+//       format: 'jsonp',
+//       platform: 'yqq',
+//       needNewCode: 0,
+//       cid: 205361747,
+//       uin: 3051522991,
+//       guid: 5931742855,
+//       songmid: songmid,
+//       filename: `C400${songmid}.m4a`
+//     }
+//   )
+//   return jsonp(url, data, options)
+// }
