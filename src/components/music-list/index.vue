@@ -4,11 +4,21 @@
       <i class="icon-back" @click="back"></i>
       <h1 class="title-name" v-html="title"></h1>
     </div>
-    <div class="bg-image" :style="bgStyle"></div>
+    <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="filter"></div>
+    </div>
+    <song-scroll :data="songs" class="song-scroll" ref="songScroll">
+      <div class="song-list-wrapper">
+        <song-list :songs="songs"></song-list>
+      </div>
+    </song-scroll>
   </div>
 </template>
 
 <script>
+import SongScroll from 'base/scroll/scroll'
+import SongList from 'base/songList'
+
 export default {
   props: {
     bgImage: {
@@ -24,10 +34,18 @@ export default {
       default: ''
     }
   },
+  components: {
+    SongScroll,
+    SongList
+  },
   computed: {
     bgStyle() {
       return `background-image: url(${this.bgImage})`
     }
+  },
+  mounted() {
+    this.$refs['songScroll'].$el.style.top = `${this.$refs['bgImage']
+      .clientHeight + 2}px`
   },
   methods: {
     back() {
@@ -88,6 +106,30 @@ export default {
     background-size: cover;
     transform-origin: top;
     background-color: #666;
+
+    .filter {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .song-scroll {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    .song-list-wrapper {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
   }
 }
 </style>
