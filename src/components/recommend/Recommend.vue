@@ -74,7 +74,7 @@ export default {
     imgLoad() {
       if (!this.checkLoading) {
         this.checkLoading = true
-        this.$refs.scroll.refresh()
+        this.$refs['recommendScroll'].refresh()
       }
     }
   },
@@ -87,7 +87,7 @@ export default {
     setTimeout(() => {
       this._getRecommend()
       this._getPlayList()
-      this.$refs.scroll.refresh()
+      this.$refs['recommendScroll'].refresh()
     }, 1000)
   }
 }

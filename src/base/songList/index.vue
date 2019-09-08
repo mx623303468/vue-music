@@ -50,12 +50,14 @@ export default {
       .name {
         no-wrap();
         color: $color-text-333;
+        padding: 1px;
       }
 
       .desc {
         no-wrap();
         margin-top: 8px;
         color: $color-text-999;
+        padding: 1px;
       }
     }
   }

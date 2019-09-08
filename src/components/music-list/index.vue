@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import SongScroll from 'base/scroll/scroll'
+import SongScroll from 'base/scroll/Scroll'
 import SongList from 'base/songList'
 
 export default {
@@ -76,11 +76,32 @@ export default {
     }
   },
   watch: {
-    scrollY(newY) {
-      // 用背景图的高度减去 topbar 的高度，得出最大可滚动距离，和最新的滚动位置做比较，取最大值。
-      let translateY = Math.max(-this.bgImageHeight + this.topBarHeight, newY)
+    scrollY(newVal) {
+      let zIndex = 0
+      let scale = 1
+      let percent = Math.abs(newVal / this.bgImageHeight) // 滚动距离相对背景图片的值
 
+      // 用背景图的高度减去 topbar 的高度，得出最大可滚动距离，和最新的滚动位置做比较，取最大值。
+      let translateY = Math.max(-this.bgImageHeight + this.topBarHeight, newVal)
       this.$refs['layer'].style['transform'] = `translateY(${translateY}px)`
+
+      // 如果滚动距离大于0 ，则证明为向下滚动，就设置背景图片的 scale 随滚动距离变化。
+      if (newVal > 0) {
+        scale = 1 + percent
+        zIndex = 10
+      }
+
+      // 如果向上滚动的距离小于 背景图片减去topbar的高度，图片高度就等于topbar的高度，并设置 z-index 保证覆盖滚动列表，否则就设置回原本的样式大小
+      if (newVal < -this.bgImageHeight + this.topBarHeight) {
+        zIndex = 10
+        this.$refs['bgImage'].style['height'] = `${this.topBarHeight}px`
+        this.$refs['bgImage'].style['paddingTop'] = 0
+      } else {
+        this.$refs['bgImage'].style['height'] = 0
+        this.$refs['bgImage'].style['paddingTop'] = `70%`
+      }
+      this.$refs.bgImage.style['transform'] = `scale(${scale})`
+      this.$refs['bgImage'].style['zIndex'] = zIndex
     }
   }
 }
@@ -136,6 +157,7 @@ export default {
     padding-top: 70%;
     background-size: cover;
     transform-origin: top;
+    // transition: all 0.3s;
     background-color: #666;
 
     .filter {
