@@ -5,7 +5,7 @@
       <h1 class="title-name" v-html="title"></h1>
     </div>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="filter"></div>
+      <div class="filter" ref="fliter"></div>
     </div>
     <div class="layer" ref="layer"></div>
     <song-scroll
@@ -80,6 +80,7 @@ export default {
       let zIndex = 0
       let scale = 1
       let percent = Math.abs(newVal / this.bgImageHeight) // 滚动距离相对背景图片的值
+      // let blur = 0
 
       // 用背景图的高度减去 topbar 的高度，得出最大可滚动距离，和最新的滚动位置做比较，取最大值。
       let translateY = Math.max(-this.bgImageHeight + this.topBarHeight, newVal)
@@ -89,7 +90,10 @@ export default {
       if (newVal > 0) {
         scale = 1 + percent
         zIndex = 10
+      } else {
+        // blur = Math.min(20, 20 * percent)
       }
+      // this.$refs['filter'].style['fliter'] = `blur(${blur}px)`
 
       // 如果向上滚动的距离小于 背景图片减去topbar的高度，图片高度就等于topbar的高度，并设置 z-index 保证覆盖滚动列表，否则就设置回原本的样式大小
       if (newVal < -this.bgImageHeight + this.topBarHeight) {

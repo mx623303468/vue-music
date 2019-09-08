@@ -3,6 +3,31 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const os = require('os')
+
+// 获取本机IP地址
+function getNetworkIp() {
+  let needHost = ''
+  try {
+    let network = os.networkInterfaces()
+    for (const dev in network) {
+      let iface = network[dev]
+      for (let i = 0; i < iface.length; i++) {
+        let alias = iface[i]
+        if (
+          alias.family === 'IPv4' &&
+          alias.address !== '127.0.0.1' &&
+          !alias.internal
+        ) {
+          needHost = alias.address
+        }
+      }
+    }
+  } catch (error) {
+    needHost = 'localhost'
+  }
+  return needHost
+}
 
 module.exports = {
   dev: {
@@ -43,7 +68,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: '0.0.0.0', // can be overwritten by process.env.HOST
+    host: getNetworkIp(), // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
@@ -80,7 +105,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/music/',
 
     /**
      * Source Maps
