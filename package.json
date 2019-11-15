@@ -12,7 +12,7 @@
     "deploy": "deploy.sh"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "babel-runtine": "^1.0.1",
     "better-scroll": "^1.13.2",
     "fastclick": "^1.0.6",
